@@ -22,11 +22,16 @@ import { useRef, useEffect, useState } from "react";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 
 // MathLive block component
-function MathLiveBlock({ latexFormula, style }) {
+function MathLiveBlock({ latexFormula, style, contentRef }) {
   const [value, setValue] = useState(latexFormula);
 
   return (
-    <math-field onInput={(evt) => setValue(evt.target.value)} style={style}>
+    <math-field
+      onInput={(evt) => setValue(evt.target.value)}
+      style={style}
+      className={"inline-content"}
+      ref={contentRef}
+    >
       {value}
     </math-field>
   );
@@ -54,7 +59,7 @@ const mathLiveInline = createReactInlineContentSpec(
       latexFormula: { default: "" },
       style: { default: "" },
     },
-    content: "none",
+    content: "styled",
   },
   {
     render: (props) => <MathLiveBlock {...props} />,
@@ -73,6 +78,8 @@ const getMathMenuItems = (editor) => {
           " ", // add a space after mathlive block
         ]);
       },
+      icon: <HiOutlineGlobeAlt size={18} />,
+      subtext: "Used to insert a inline region to input math formula.",
     },
     {
       title: "math block",
@@ -82,7 +89,6 @@ const getMathMenuItems = (editor) => {
         });
       },
       aliases: ["mm", "mathblock"],
-      group: "Math",
       icon: <HiOutlineGlobeAlt size={18} />,
       subtext: "Used to insert a block to input math formula.",
     },
