@@ -1,6 +1,6 @@
 # blocknote demo
 
-This is trying to combine blocknote and [mathlive](https://mathlive.io/mathfield/), but this is not a complete project, because moving the math block will lost typed formula.
+This is trying to combine [blocknote](https://www.blocknotejs.org/) and [mathlive](https://mathlive.io/mathfield/), but this is not a complete project, because moving the math block will lost typed formula.
 
 ## Getting Started
 
