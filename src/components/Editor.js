@@ -9,13 +9,17 @@ import {
   defaultProps,
   defaultInlineContentSpecs,
   filterSuggestionItems,
+  defaultBlockSpecs,
+  insertOrUpdateBlock,
 } from "@blocknote/core";
 import {
   createReactInlineContentSpec,
   SuggestionMenuController,
+  createReactBlockSpec,
 } from "@blocknote/react";
 import "mathlive";
 import { useRef, useEffect, useState } from "react";
+import { HiOutlineGlobeAlt } from "react-icons/hi";
 
 // MathLive block component
 function MathLiveBlock({ latexFormula, style }) {
@@ -28,17 +32,27 @@ function MathLiveBlock({ latexFormula, style }) {
   );
 }
 
-// Create custom MathLive block spec
-const mathLiveBlock = createReactInlineContentSpec(
+const mathLiveBlock = createReactBlockSpec(
   {
-    type: "mathlive",
+    type: "mathblock",
     propSchema: {
-      latexFormula: {
-        default: "",
-      },
-      style: {
-        default: "display: inline",
-      },
+      textAlignment: "center",
+      textColor: defaultProps.textColor,
+      latexFormula: { default: "" },
+      style: { default: "display: block" },
+    },
+    content: "inline",
+  },
+  {
+    render: (props) => <MathLiveBlock {...props} />,
+  }
+);
+const mathLiveInline = createReactInlineContentSpec(
+  {
+    type: "inlinemath",
+    propSchema: {
+      latexFormula: { default: "" },
+      style: { default: "" },
     },
     content: "none",
   },
@@ -47,11 +61,43 @@ const mathLiveBlock = createReactInlineContentSpec(
   }
 );
 
+const getMathMenuItems = (editor) => {
+  return [
+    {
+      title: "inline math",
+      onItemClick: () => {
+        editor.insertInlineContent([
+          {
+            type: "inlinemath",
+          },
+          " ", // add a space after mathlive block
+        ]);
+      },
+    },
+    {
+      title: "math block",
+      onItemClick: () => {
+        insertOrUpdateBlock(editor, {
+          type: "mathblock",
+        });
+      },
+      aliases: ["mm", "mathblock"],
+      group: "Math",
+      icon: <HiOutlineGlobeAlt size={18} />,
+      subtext: "Used to insert a block to input math formula.",
+    },
+  ];
+};
+
 // Create schema with custom MathLive block
 const schema = BlockNoteSchema.create({
   inlineContentSpecs: {
     ...defaultInlineContentSpecs,
-    mathlive: mathLiveBlock,
+    inlinemath: mathLiveInline,
+  },
+  blockSpecs: {
+    ...defaultBlockSpecs,
+    mathblock: mathLiveBlock,
   },
 });
 
@@ -63,6 +109,9 @@ export default function Editor() {
         type: "paragraph",
         content:
           "Welcome to the editor! Try adding a math expression by typing '$'.",
+      },
+      {
+        type: "mathblock",
       },
     ],
   });
@@ -79,33 +128,3 @@ export default function Editor() {
     </BlockNoteView>
   );
 }
-
-const getMathMenuItems = (editor) => {
-  return [
-    {
-      title: "inline math",
-      onItemClick: () => {
-        editor.insertInlineContent([
-          {
-            type: "mathlive",
-          },
-          " ", // add a space after mathlive block
-        ]);
-      },
-    },
-    {
-      title: "math block",
-      onItemClick: () => {
-        editor.insertInlineContent([
-          {
-            type: "mathlive",
-            props: {
-              style: "display: block",
-            },
-          },
-          " ", // add a space after mathlive block
-        ]);
-      },
-    },
-  ];
-};
