@@ -22,8 +22,8 @@ import { useRef, useEffect, useState } from "react";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 
 // MathLive block component
-function MathLiveBlock({ latexFormula, style, contentRef }) {
-  const [value, setValue] = useState(latexFormula);
+function MathLiveBlock({ style, contentRef }) {
+  const [value, setValue] = useState("");
 
   return (
     <math-field
@@ -43,7 +43,6 @@ const mathLiveBlock = createReactBlockSpec(
     propSchema: {
       textAlignment: "center",
       textColor: defaultProps.textColor,
-      latexFormula: { default: "" },
       style: { default: "display: block" },
     },
     content: "inline",
@@ -56,7 +55,6 @@ const mathLiveInline = createReactInlineContentSpec(
   {
     type: "inlinemath",
     propSchema: {
-      latexFormula: { default: "" },
       style: { default: "" },
     },
     content: "styled",
